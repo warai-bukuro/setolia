@@ -7,6 +7,7 @@ class Config {
 public:
 	// Text content
 	QString reserveText;
+	QString singingNumber;
 	QString singingText;
 	QString setlistText;
 

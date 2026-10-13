@@ -43,6 +43,7 @@ public:
 	const std::string &cacheData() const;
 
 private:
+	void addNumber();
 	void notifyStateChanged();
 	Config getConfigForSave() const;
 

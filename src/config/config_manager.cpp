@@ -36,7 +36,8 @@ bool ConfigManager::validateConfig(const Config &config) const
 {
 	// Validate text lengths (prevent injection/overflow)
 	if (config.reserveText.length() > 10000 || config.singingText.length() > 1000 ||
-	    config.setlistText.length() > 10000 || config.selectedTemplate.length() > 256) {
+	    config.setlistText.length() > 10000 || config.selectedTemplate.length() > 256 ||
+	    config.singingNumber.length() > 16) {
 		blog(LOG_WARNING, "ConfigManager: Config text exceeds maximum length");
 		return false;
 	}
@@ -75,6 +76,7 @@ bool ConfigManager::loadConfig(Config &config) const
 
 	// Load with defaults
 	config.reserveText = jsonObj.value("reserve").toString("");
+	config.singingNumber = jsonObj.value("singingNumber").toString("");
 	config.singingText = jsonObj.value("singing").toString("");
 	config.setlistText = jsonObj.value("setlist").toString("");
 	config.clockToggled = jsonObj.value("clockToggled").toBool(false);
@@ -105,6 +107,7 @@ bool ConfigManager::saveConfig(const Config &config) const
 
 	QJsonObject jsonObj;
 	jsonObj["reserve"] = config.reserveText;
+	jsonObj["singingNumber"] = config.singingNumber;
 	jsonObj["singing"] = config.singingText;
 	jsonObj["setlist"] = config.setlistText;
 	jsonObj["clockToggled"] = config.clockToggled;

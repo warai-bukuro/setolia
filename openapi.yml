@@ -13,6 +13,10 @@ components:
           type: array
           items:
             type: string
+        singnum:
+          type: string
+          description: Current song number displayed in the dock.
+          example: "3"
         singing:
           type: array
           items:

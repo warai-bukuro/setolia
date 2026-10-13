@@ -24,6 +24,7 @@ struct SetoliaTextSourceDescriptor {
 // Keep reserve source ID for backward compatibility with existing scenes.
 constexpr SetoliaTextSourceDescriptor kDescriptors[] = {
 	{"reserve_list_text_source", "RESERVE_TEXT_SOURCE_NAME", TaggedTextSourceManager::TextState::Reserve},
+	{"setolia_number_text_source", "NUMBER_TEXT_SOURCE_NAME", TaggedTextSourceManager::TextState::Number},
 	{"setolia_singing_text_source", "SINGING_TEXT_SOURCE_NAME", TaggedTextSourceManager::TextState::Singing},
 	{"setolia_setlist_text_source", "SETLIST_TEXT_SOURCE_NAME", TaggedTextSourceManager::TextState::Setlist},
 };

@@ -9,6 +9,7 @@ class TaggedTextSourceManager {
 public:
 	enum class TextState {
 		Reserve,
+		Number,
 		Singing,
 		Setlist,
 	};

@@ -42,6 +42,7 @@ std::string buildCachedData(const DockViewParts &viewParts)
 	QJsonObject jsonObj = QJsonObject();
 	jsonObj["reserve"] =
 		QJsonArray::fromStringList(viewParts.reserveText->toPlainText().split("\n", Qt::SkipEmptyParts));
+	jsonObj["singnum"] = viewParts.singingNumber->text().trimmed();
 	jsonObj["singing"] = QJsonArray::fromStringList(splitTimestamp(viewParts.singingText->text()));
 
 	QJsonArray setlist;
@@ -80,9 +81,26 @@ DockActions::~DockActions()
 	}
 }
 
+void DockActions::addNumber()
+{
+	const QString singingNumber = viewParts.singingNumber->text().trimmed();
+	const QString currentSetlist = viewParts.setlistText->toPlainText();
+	if (!singingNumber.isEmpty()) {
+		if (singingNumber.toInt() > 0) {
+			viewParts.singingNumber->setText(QString::number(singingNumber.toInt() + 1));
+		} else {
+			viewParts.singingNumber->setText(
+				QString::number(currentSetlist.split("\n", Qt::SkipEmptyParts).length() + 1));
+		}
+	} else {
+		viewParts.singingNumber->setText(QString::number(1));
+	}
+}
+
 void DockActions::nextSong()
 {
 	viewParts.reserveText->blockSignals(true);
+	viewParts.singingNumber->blockSignals(true);
 	viewParts.singingText->blockSignals(true);
 	viewParts.setlistText->blockSignals(true);
 
@@ -105,6 +123,7 @@ void DockActions::nextSong()
 				}
 				if (!topLine.isEmpty()) {
 					viewParts.singingText->setText(topLine);
+					addNumber();
 					reserveLines.removeFirst();
 					viewParts.reserveText->setPlainText(reserveLines.join("\n"));
 				}
@@ -130,6 +149,7 @@ void DockActions::nextSong()
 			}
 			if (!topLine.isEmpty()) {
 				viewParts.singingText->setText(topLine);
+				addNumber();
 				reserveLines.removeFirst();
 				viewParts.reserveText->setPlainText(reserveLines.join("\n"));
 			}
@@ -137,6 +157,7 @@ void DockActions::nextSong()
 	}
 
 	viewParts.reserveText->blockSignals(false);
+	viewParts.singingNumber->blockSignals(false);
 	viewParts.singingText->blockSignals(false);
 	viewParts.setlistText->blockSignals(false);
 
@@ -154,14 +175,17 @@ void DockActions::resetAll()
 	}
 
 	viewParts.reserveText->blockSignals(true);
+	viewParts.singingNumber->blockSignals(true);
 	viewParts.singingText->blockSignals(true);
 	viewParts.setlistText->blockSignals(true);
 
 	viewParts.reserveText->clear();
+	viewParts.singingNumber->clear();
 	viewParts.singingText->clear();
 	viewParts.setlistText->clear();
 
 	viewParts.reserveText->blockSignals(false);
+	viewParts.singingNumber->blockSignals(false);
 	viewParts.singingText->blockSignals(false);
 	viewParts.setlistText->blockSignals(false);
 
@@ -283,6 +307,8 @@ void DockActions::notifyStateChanged()
 	cachedData = buildCachedData(viewParts);
 	TaggedTextSourceManager::setCurrentText(TaggedTextSourceManager::TextState::Reserve,
 						viewParts.reserveText->toPlainText());
+	TaggedTextSourceManager::setCurrentText(TaggedTextSourceManager::TextState::Number,
+						viewParts.singingNumber->text());
 	TaggedTextSourceManager::setCurrentText(TaggedTextSourceManager::TextState::Singing,
 						viewParts.singingText->text());
 	TaggedTextSourceManager::setCurrentText(TaggedTextSourceManager::TextState::Setlist,
@@ -290,6 +316,8 @@ void DockActions::notifyStateChanged()
 	if (taggedTextSourceManager) {
 		taggedTextSourceManager->syncAllTaggedSources(TaggedTextSourceManager::TextState::Reserve,
 							      viewParts.reserveText->toPlainText());
+		taggedTextSourceManager->syncAllTaggedSources(TaggedTextSourceManager::TextState::Number,
+							      viewParts.singingNumber->text());
 		taggedTextSourceManager->syncAllTaggedSources(TaggedTextSourceManager::TextState::Singing,
 							      viewParts.singingText->text());
 		taggedTextSourceManager->syncAllTaggedSources(TaggedTextSourceManager::TextState::Setlist,
@@ -318,6 +346,7 @@ Config DockActions::getConfigForSave() const
 {
 	Config config;
 	config.reserveText = viewParts.reserveText->toPlainText();
+	config.singingNumber = viewParts.singingNumber->text();
 	config.singingText = viewParts.singingText->text();
 	config.setlistText = viewParts.setlistText->toPlainText();
 	config.clockToggled = viewParts.clockToggle->isChecked();
@@ -331,6 +360,7 @@ void DockActions::applyConfig(const Config &config)
 {
 	// Block signals to prevent unnecessary cache updates during restoration
 	viewParts.reserveText->blockSignals(true);
+	viewParts.singingNumber->blockSignals(true);
 	viewParts.singingText->blockSignals(true);
 	viewParts.setlistText->blockSignals(true);
 	viewParts.clockToggle->blockSignals(true);
@@ -340,6 +370,7 @@ void DockActions::applyConfig(const Config &config)
 
 	// Restore text content
 	viewParts.reserveText->setPlainText(config.reserveText);
+	viewParts.singingNumber->setText(config.singingNumber);
 	viewParts.singingText->setText(config.singingText);
 	viewParts.setlistText->setPlainText(config.setlistText);
 
@@ -364,6 +395,7 @@ void DockActions::applyConfig(const Config &config)
 
 	// Unblock all signals
 	viewParts.reserveText->blockSignals(false);
+	viewParts.singingNumber->blockSignals(false);
 	viewParts.singingText->blockSignals(false);
 	viewParts.setlistText->blockSignals(false);
 	viewParts.timestampToggle->blockSignals(false);
@@ -373,6 +405,8 @@ void DockActions::applyConfig(const Config &config)
 	// Update cache with restored state
 	TaggedTextSourceManager::setCurrentText(TaggedTextSourceManager::TextState::Reserve,
 						viewParts.reserveText->toPlainText());
+	TaggedTextSourceManager::setCurrentText(TaggedTextSourceManager::TextState::Number,
+						viewParts.singingNumber->text());
 	TaggedTextSourceManager::setCurrentText(TaggedTextSourceManager::TextState::Singing,
 						viewParts.singingText->text());
 	TaggedTextSourceManager::setCurrentText(TaggedTextSourceManager::TextState::Setlist,

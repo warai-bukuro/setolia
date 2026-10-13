@@ -79,6 +79,9 @@ void SetoliaDockWidget::buildUI()
 
 	auto *singingLabel = new QLabel(obs_module_text("SINGING_LABEL"), content);
 	singingLabel->setStyleSheet("font-weight: bold;");
+	viewParts.singingNumber = new QLineEdit(content);
+	viewParts.singingNumber->setPlaceholderText("0");
+	viewParts.singingNumber->setFixedWidth(60);
 	viewParts.singingText = new QLineEdit(content);
 
 	auto *setlistLabel = new QLabel(obs_module_text("SETLIST_LABEL"), content);
@@ -126,6 +129,7 @@ void SetoliaDockWidget::buildUI()
 	contentLayout->addWidget(viewParts.reserveText);
 	contentLayout->addSpacing(10);
 	contentLayout->addWidget(singingLabel);
+	contentLayout->addWidget(viewParts.singingNumber);
 	contentLayout->addWidget(viewParts.singingText);
 	contentLayout->addSpacing(10);
 	contentLayout->addWidget(setlistLabel);

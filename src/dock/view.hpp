@@ -18,6 +18,7 @@ struct DockViewParts {
 	// Reserve, Singing, Setlist
 	QTextEdit *reserveText = nullptr;
 	QLineEdit *singingText = nullptr;
+	QLineEdit *singingNumber= nullptr;
 	QTextEdit *setlistText = nullptr;
 
 	// Next Song

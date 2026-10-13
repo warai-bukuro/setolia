@@ -10,11 +10,13 @@ constexpr const char *kTextSettingKey = "text";
 constexpr const char *kTagSettingKey = "setolia_tag";
 constexpr const char *kStateSettingKey = "setolia_text_state";
 constexpr const char *kStateReserve = "reserve";
+constexpr const char *kStateNumber = "number";
 constexpr const char *kStateSinging = "singing";
 constexpr const char *kStateSetlist = "setlist";
 
 struct CurrentTexts {
 	QString reserve;
+	QString number;
 	QString singing;
 	QString setlist;
 };
@@ -70,6 +72,9 @@ void TaggedTextSourceManager::setCurrentText(TextState state, const QString &tex
 	case TextState::Reserve:
 		g_currentTexts.reserve = text;
 		break;
+	case TextState::Number:
+		g_currentTexts.number = text;
+		break;
 	case TextState::Singing:
 		g_currentTexts.singing = text;
 		break;
@@ -86,6 +91,8 @@ QString TaggedTextSourceManager::currentText(TextState state)
 	switch (state) {
 	case TextState::Reserve:
 		return g_currentTexts.reserve;
+	case TextState::Number:
+		return g_currentTexts.number;
 	case TextState::Singing:
 		return g_currentTexts.singing;
 	case TextState::Setlist:
@@ -215,6 +222,8 @@ const char *TaggedTextSourceManager::stateToSettingValue(TextState state)
 	switch (state) {
 	case TextState::Reserve:
 		return kStateReserve;
+	case TextState::Number:
+		return kStateNumber;
 	case TextState::Singing:
 		return kStateSinging;
 	case TextState::Setlist:
@@ -227,6 +236,9 @@ const char *TaggedTextSourceManager::stateToSettingValue(TextState state)
 TaggedTextSourceManager::TextState TaggedTextSourceManager::stateFromSettingValue(const QString &value)
 {
 	const QString normalized = value.trimmed().toLower();
+	if (normalized == QString::fromUtf8(kStateNumber)) {
+		return TextState::Number;
+	}
 	if (normalized == QString::fromUtf8(kStateSinging)) {
 		return TextState::Singing;
 	}
